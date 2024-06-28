@@ -14,6 +14,7 @@ return require('packer').startup(function(use)
   }
 
   use ('datsfilipe/vesper.nvim')
+  use({ 'rose-pine/neovim', as = 'rose-pine' })
 
   use ('nvim-treesitter/nvim-treesitter', {run = ':TSUpdate'})
   use ('nvim-treesitter/playground')
@@ -38,6 +39,7 @@ return require('packer').startup(function(use)
     {'hrsh7th/cmp-nvim-lsp'},
     {'L3MON4D3/LuaSnip'},
   }
+
 }
 
 end)
