@@ -51,7 +51,7 @@ end)
 
 require('mason').setup()
 require('mason-lspconfig').setup({
-    ensure_installed = { 'tsserver', 'gopls', 'rust_analyzer' }
+    ensure_installed = { 'vtsls', 'gopls', 'rust_analyzer' }
 })
 
 -- here you can setup the language servers
@@ -65,4 +65,4 @@ require'lspconfig'.rust_analyzer.setup({
         }
     }
 })
-require'lspconfig'.tsserver.setup{}
+require'lspconfig'.vtsls.setup{}
