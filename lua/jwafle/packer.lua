@@ -1,5 +1,3 @@
--- This file can be loaded by calling `lua require('plugins')` from your init.vim
-
 -- Only required if you have packer configured as `opt`
 vim.cmd([[packadd packer.nvim]])
 
@@ -50,37 +48,56 @@ return require("packer").startup(function(use)
 			vim.fn["fzf#install"]()
 		end,
 	})
-	-- init.lua
-
-	-- Initialize packer.nvim
 	use({
 		"jwafle/llm.nvim", -- Replace with your actual GitHub username and repository name
 		requires = { "nvim-lua/plenary.nvim" }, -- Ensure plenary.nvim is included
 		config = function()
-			require("llm").setup({
-				models = {
-					ollama_llama_32 = {
-						model_name = "llama3.2", -- Replace with your specific Ollama model name
-						url = "http://localhost:11434/api/generate",
-						max_tokens = 150,
-						temperature = 0.7,
-						suffix = "", -- Optional: Add any suffix if needed
-						options = {
-							-- Add any additional Ollama-specific parameters here
-							-- Example:
-							-- seed = 42,
-							-- stop = {"\n", "user:"},
-						},
-					},
-					-- Add more Ollama models as needed
-				},
-				default_model = "ollama_llama_32",
-				prompt = "Please assist me with the following code:",
-				model_shortcuts = {
-					["<leader>lg"] = "ollama_llama_32",
-					-- Define more shortcuts as needed
-				},
-			})
+			local llm = require("llm")
+			local system_prompt =
+				"You should replace the code that you are sent, only following the comments. Do not talk at all. Only output valid code. Do not provide any backticks that surround the code. Never ever output backticks like this ```. Any comment that is asking you for something should be removed after you satisfy them. Other comments should left alone. Do not output backticks"
+			local helpful_prompt = "You are a helpful assistant. What I have sent are my notes so far."
+			local function ollama_replace()
+				llm.invoke_llm_and_stream_into_editor({
+					url = "http://localhost:11434/v1/chat/completions",
+					model = "llama3.2:3b",
+					system_prompt = system_prompt,
+					replace = true,
+				}, llm.make_openai_spec_curl_args, llm.handle_openai_spec_data)
+			end
+
+			local function ollama_help()
+				llm.invoke_llm_and_stream_into_editor({
+					url = "http://localhost:11434/v1/chat/completions",
+					model = "llama3.2:3b",
+					system_prompt = helpful_prompt,
+					replace = false,
+				}, llm.make_openai_spec_curl_args, llm.handle_openai_spec_data)
+			end
+
+			local function omini_replace()
+				llm.invoke_llm_and_stream_into_editor({
+					url = "https://api.openai.com/v1/chat/completions",
+					model = "gpt-4o-mini",
+					api_key_name = "OPENAI_API_KEY",
+					system_prompt = system_prompt,
+					replace = true,
+				}, llm.make_openai_spec_curl_args, llm.handle_openai_spec_data)
+			end
+
+			local function omini_help()
+				llm.invoke_llm_and_stream_into_editor({
+					url = "https://api.openai.com/v1/chat/completions",
+					model = "gpt-4o-mini",
+					api_key_name = "OPENAI_API_KEY",
+					system_prompt = helpful_prompt,
+					replace = false,
+				}, llm.make_openai_spec_curl_args, llm.handle_openai_spec_data)
+			end
+
+			vim.keymap.set({ "n", "v" }, "<leader>l", ollama_replace, { desc = "llm ollama_replace" })
+			vim.keymap.set({ "n", "v" }, "<leader>L", ollama_help, { desc = "llm ollama_replace" })
+			vim.keymap.set({ "n", "v" }, "<leader>g", omini_replace, { desc = "llm omini_replace" })
+			vim.keymap.set({ "n", "v" }, "<leader>G", omini_help, { desc = "llm omini_replace" })
 		end,
 	})
 
