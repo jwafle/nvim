@@ -71,7 +71,7 @@ end)
 
 require("mason").setup()
 require("mason-lspconfig").setup({
-	ensure_installed = { "vtsls", "gopls", "rust_analyzer", "lua_ls" },
+	ensure_installed = { "vtsls", "gopls", "rust_analyzer", "lua_ls", "cmake", "clangd" },
 })
 
 -- here you can setup the language servers
@@ -119,3 +119,5 @@ require("lspconfig").lua_ls.setup({
 		Lua = {},
 	},
 })
+require("lspconfig").cmake.setup({})
+require("lspconfig").clangd.setup({})
