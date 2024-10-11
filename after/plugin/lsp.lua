@@ -120,4 +120,11 @@ require("lspconfig").lua_ls.setup({
 	},
 })
 require("lspconfig").cmake.setup({})
-require("lspconfig").clangd.setup({})
+require("lspconfig").clangd.setup({
+	cmd = {
+		"clangd",
+		"--background-index",
+		"--query-driver=/Users/jwafle/.espressif/tools/xtensa-esp32-elf/esp-14.2.0_20240906/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc",
+	},
+	root_dir = require("lspconfig").util.root_pattern("build/compile_commands.json", ".git"),
+})
